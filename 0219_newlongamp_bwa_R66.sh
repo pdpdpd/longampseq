@@ -8,11 +8,11 @@
 #use q30 only for the initial alignment and filtering (same for 0915)
 #removed the deduct part
 
-for file in *R1_001.fastq.gz
-do
-  flash -M600 $file ${file/R1/R2}
-  mv ./out.extendedFrags.fastq ${file/.fastq.gz/_merged.fastq}
-done
+#for file in *R1_001.fastq
+#do
+#  flash -M600 $file ${file/R1/R2}
+#  mv ./out.extendedFrags.fastq ${file/.fastq/_merged.fastq}
+#done
 
 #chr index: F primer:	AGTGGGGCTGGAATAAAAGTAGAAT, Chr11:5250918-5250942 - strand
 #chr index: F primer:	TTTTTCCTTTTGTTGCCTTTGCTTC, Chr11:5245453-5245477 + strand
@@ -28,11 +28,11 @@ echo 02/20/2020 > log.txt
 for file in *merged.fastq
 do
   bwa mem -A2 -E1 /home/yp11/Desktop/genomes/hg19/hg19.fa ${file} > ${file/.fastq/.sam}
-  samtools view -S -b -q 30 ${file/.fastq/.sam} | samtools sort -o ${file/.fastq/_sorted.bam}
+  bamtools view -S -b -q 30 ${file/.fastq/.sam} | samtools sort -o ${file/.fastq/_sorted.bam}
   samtools index ${file/.fastq/_sorted.bam}
-  samtools view -b ${file/.fastq/_sorted.bam} chr2:60720359-60722401 > ${file/.fastq/_sortedleft.bam}
+  samtools view -b ${file/.fastq/_sorted.bam} chr11:5245453-5248229 > ${file/.fastq/_sortedleft.bam}
   samtools index ${file/.fastq/_sortedleft.bam}
-  samtools view -b ${file/.fastq/_sorted.bam} chr2:60722402-60724626 > ${file/.fastq/_sortedright.bam}
+  samtools view -b ${file/.fastq/_sorted.bam} chr11:5248230-5250918 > ${file/.fastq/_sortedright.bam}
   samtools index ${file/.fastq/_sortedright.bam}
   samtools view -F 4 ${file/.fastq/_sortedleft.bam} | cut -f1 | sort -u > ${file/.fastq/_leftID.txt}
   samtools view -F 4 ${file/.fastq/_sortedright.bam} | cut -f1 | sort -u > ${file/.fastq/_rightID.txt}
